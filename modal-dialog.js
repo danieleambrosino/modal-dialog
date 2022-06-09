@@ -4,6 +4,10 @@ class ModalDialog extends HTMLElement {
 		this.attachShadow({ mode: "open" });
 		const style = document.createElement('style');
 		style.textContent = `
+:host(:not([open])) {
+	display: none;
+}
+
 .backdrop {
 	position: fixed;
 	top: 0;
