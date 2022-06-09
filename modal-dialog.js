@@ -61,6 +61,10 @@ button.close {
 		closeButton.textContent = '×';
 		closeButton.addEventListener('click', this.close.bind(this));
 		this.content.appendChild(closeButton);
+
+		if (this.hasAttribute('open')) {
+			this.open();
+		}
 	}
 
 	open() {
