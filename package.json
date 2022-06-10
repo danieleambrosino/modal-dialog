@@ -1,0 +1,8 @@
+{
+	"devDependencies": {
+		"esbuild": "^0.14.43"
+	},
+	"scripts": {
+		"build": "esbuild --minify lib/ModalDialog.js --outfile=dist/ModalDialog.min.js"
+	}
+}
