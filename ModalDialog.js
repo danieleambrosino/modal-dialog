@@ -1,4 +1,7 @@
 class ModalDialog extends HTMLElement {
+	#backdrop;
+	#content;
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: "open" });
@@ -43,26 +46,27 @@ button.close {
 	cursor: pointer;
 }
 `;
-		this.shadowRoot.appendChild(style);
 
-		this.backdrop = document.createElement('div');
-		this.backdrop.setAttribute('role', 'presentation');
-		this.backdrop.classList.add('backdrop');
-		this.backdrop.addEventListener('click', this.closeOnBackdropClick.bind(this));
-		this.shadowRoot.appendChild(this.backdrop);
+		this.#backdrop = document.createElement('div');
+		this.#backdrop.setAttribute('role', 'presentation');
+		this.#backdrop.classList.add('backdrop');
+		this.#backdrop.addEventListener('click', this.#closeOnBackdropClick.bind(this));
 
-		this.content = document.createElement('div');
-		this.content.classList.add('content');
-		this.backdrop.appendChild(this.content);
+		this.#content = document.createElement('div');
+		this.#content.classList.add('content');
+		this.#backdrop.appendChild(this.#content);
 
-		this.content.appendChild(document.createElement('slot'));
+		this.#content.appendChild(document.createElement('slot'));
 
 		const closeButton = document.createElement('button');
 		closeButton.setAttribute('type', 'button');
 		closeButton.classList.add('close');
 		closeButton.textContent = '×';
 		closeButton.addEventListener('click', this.close.bind(this));
-		this.content.appendChild(closeButton);
+		this.#content.appendChild(closeButton);
+
+		this.shadowRoot.appendChild(style);
+		this.shadowRoot.appendChild(this.#backdrop);
 	}
 
 	open() {
@@ -73,34 +77,46 @@ button.close {
 		this.removeAttribute('open');
 	}
 
-	closeOnBackdropClick(event) {
-		if (event.target === this.backdrop) {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	#closeOnBackdropClick(event) {
+		if (event.target === this.#backdrop) {
 			this.close();
 		}
 	}
 
-	catchEscape = ((event) => {
+	/**
+	 * @param {KeyboardEvent} event
+	 */
+	#catchEscape = ((event) => {
 		if (event.key === 'Escape') {
 			this.close();
 		}
 	}).bind(this);
 
+	/**
+	 * @param {string} name
+	 * @param {?string} oldValue 
+	 * @param {?string} newValue 
+	 * @returns {void}
+	 */
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name !== 'open') return;
 		if (newValue !== null) {
-			this.doOpen();
+			this.#doOpen();
 		} else {
-			this.doClose();
+			this.#doClose();
 		}
 	}
 
-	doOpen() {
-		this.closeAllPreviouslyOpened();
+	#doOpen() {
+		this.#closeAllPreviouslyOpened();
 		document.body.style.overflow = 'hidden';
-		document.addEventListener('keydown', this.catchEscape);
+		document.addEventListener('keydown', this.#catchEscape);
 	}
 
-	closeAllPreviouslyOpened() {
+	#closeAllPreviouslyOpened() {
 		/**
 		 * @type {ModalDialog[]}
 		 */
@@ -112,9 +128,9 @@ button.close {
 			});
 	}
 
-	doClose() {
+	#doClose() {
 		document.body.style.removeProperty('overflow');
-		document.removeEventListener('keydown', this.catchEscape);
+		document.removeEventListener('keydown', this.#catchEscape);
 	}
 
 	static get observedAttributes() { return ['open']; }
