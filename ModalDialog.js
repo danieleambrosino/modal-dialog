@@ -86,13 +86,35 @@ button.close {
 	}).bind(this);
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name !== 'open') return;
 		if (newValue !== null) {
-			document.body.style.overflow = 'hidden';
-			document.addEventListener('keydown', this.catchEscape);
+			this.doOpen();
 		} else {
-			document.body.style.removeProperty('overflow');
-			document.removeEventListener('keydown', this.catchEscape);
+			this.doClose();
 		}
+	}
+
+	doOpen() {
+		this.closeAllPreviouslyOpened();
+		document.body.style.overflow = 'hidden';
+		document.addEventListener('keydown', this.catchEscape);
+	}
+
+	closeAllPreviouslyOpened() {
+		/**
+		 * @type {ModalDialog[]}
+		 */
+		const modals = Array.from(document.querySelectorAll('modal-dialog[open]'));
+		modals
+			.filter((modal) => modal !== this)
+			.forEach((modal) => {
+				modal.close();
+			});
+	}
+
+	doClose() {
+		document.body.style.removeProperty('overflow');
+		document.removeEventListener('keydown', this.catchEscape);
 	}
 
 	static get observedAttributes() { return ['open']; }
