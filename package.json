@@ -3,6 +3,6 @@
 		"esbuild": "^0.14.43"
 	},
 	"scripts": {
-		"build": "esbuild --minify lib/ModalDialog.js --outfile=dist/ModalDialog.min.js"
+		"build": "esbuild --minify ModalDialog.js --outfile=ModalDialog.min.js"
 	}
 }
