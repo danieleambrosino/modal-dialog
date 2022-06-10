@@ -7,30 +7,37 @@ class ModalDialog extends HTMLElement {
 		this.attachShadow({ mode: "open" });
 		const style = document.createElement('style');
 		style.textContent = `
-:host(:not([open])) {
-	display: none;
-}
-
-.backdrop {
+:host {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 9999;
+}
+
+:host(:not([open])) {
+	display: none;
+}
+
+.backdrop {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
 	display: grid;
 	place-items: center;
+	padding: 1rem;
 }
 
 .content {
 	position: relative;
 	background-color: white;
 	border-radius: 5px;
-	margin: 1rem;
 	padding: 1rem;
+	box-sizing: border-box;
 	max-width: 768px;
-	max-height: 90vh;
+	max-height: 100%;
 	overflow-y: auto;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
