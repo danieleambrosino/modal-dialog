@@ -86,7 +86,6 @@ button.close {
 	}
 
 	catchEscape = ((event) => {
-		console.log(event.key);
 		if (event.key === 'Escape') {
 			this.close();
 		}
