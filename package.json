@@ -3,7 +3,7 @@
 		"esbuild": "^0.14.43"
 	},
 	"scripts": {
-		"dev": "esbuild --watch ModalDialog.ts --outfile=dist/ModalDialog.js",
-		"prod": "esbuild --minify ModalDialog.ts --outfile=dist/ModalDialog.min.js"
+		"dev": "esbuild --watch --sourcemap=inline ModalDialog.ts --outfile=ModalDialog.js",
+		"prod": "esbuild --minify ModalDialog.ts --outfile=ModalDialog.js"
 	}
 }
