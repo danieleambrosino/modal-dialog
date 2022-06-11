@@ -1,6 +1,5 @@
 class ModalDialog extends HTMLElement {
 	#backdrop: HTMLDivElement;
-	#content: HTMLDivElement;
 
 	constructor() {
 		super();
@@ -63,18 +62,18 @@ button.close:hover {
 		this.#backdrop.classList.add('backdrop');
 		this.#backdrop.addEventListener('click', this.#closeOnBackdropClick.bind(this));
 
-		this.#content = document.createElement('div');
-		this.#content.classList.add('content');
-		this.#backdrop.appendChild(this.#content);
+		const content = document.createElement('div');
+		content.classList.add('content');
+		this.#backdrop.appendChild(content);
 
-		this.#content.appendChild(document.createElement('slot'));
+		content.appendChild(document.createElement('slot'));
 
 		const closeButton = document.createElement('button');
 		closeButton.setAttribute('type', 'button');
 		closeButton.classList.add('close');
 		closeButton.textContent = '×';
 		closeButton.addEventListener('click', this.close.bind(this));
-		this.#content.appendChild(closeButton);
+		content.appendChild(closeButton);
 
 		this.shadowRoot.appendChild(style);
 		this.shadowRoot.appendChild(this.#backdrop);
