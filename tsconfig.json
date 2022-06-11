@@ -1,6 +1,5 @@
 {
 	"compilerOptions": {
-		"checkJs": true,
 		"target": "ESNext"
 	}
 }

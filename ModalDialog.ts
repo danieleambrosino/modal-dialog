@@ -1,6 +1,6 @@
 class ModalDialog extends HTMLElement {
-	#backdrop;
-	#content;
+	#backdrop: HTMLDivElement;
+	#content: HTMLDivElement;
 
 	constructor() {
 		super();
@@ -88,13 +88,7 @@ button.close:hover {
 		this.removeAttribute('open');
 	}
 
-	/**
-	 * @param {string} name
-	 * @param {?string} oldValue 
-	 * @param {?string} newValue 
-	 * @returns {void}
-	 */
-	attributeChangedCallback(name, oldValue, newValue) {
+	attributeChangedCallback(name: string, oldValue?: string, newValue?: string): void {
 		if (name !== 'open') return;
 		if (newValue !== null) {
 			this.#doOpen();
@@ -104,20 +98,19 @@ button.close:hover {
 	}
 	static get observedAttributes() { return ['open']; }
 
-	#doOpen() {
+	#doOpen(): void {
 		this.#closeAllPreviouslyOpened();
 		document.body.style.overflow = 'hidden';
 		document.addEventListener('keydown', this.#catchEscape);
 	}
 
-	#doClose() {
+	#doClose(): void {
 		document.body.style.removeProperty('overflow');
 		document.removeEventListener('keydown', this.#catchEscape);
 	}
 
 	#closeAllPreviouslyOpened() {
-		/** @type {ModalDialog[]} */
-		const modals = Array.from(document.querySelectorAll('modal-dialog[open]'));
+		const modals: ModalDialog[] = Array.from(document.querySelectorAll('modal-dialog[open]'));
 		modals
 			.filter((modal) => modal !== this)
 			.forEach((modal) => {
@@ -125,16 +118,13 @@ button.close:hover {
 			});
 	}
 
-	/**
-	 * @param {MouseEvent} event
-	 */
-	#closeOnBackdropClick(event) {
+	#closeOnBackdropClick(event: MouseEvent) {
 		if (event.target === this.#backdrop) {
 			this.close();
 		}
 	}
 
-	#catchEscape = ((event) => {
+	#catchEscape = ((event: KeyboardEvent) => {
 		if (event.key === 'Escape') {
 			this.close();
 		}
