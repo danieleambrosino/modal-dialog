@@ -46,11 +46,15 @@ button.close {
 	position: absolute;
 	top: 0;
 	right: 0;
-	font-size: 1.5rem;
-	padding: 0.5rem;
+	font-size: 2.5em;
 	border: none;
 	background: none;
 	cursor: pointer;
+	color: grey;
+}
+
+button.close:hover {
+	color: black;
 }
 `;
 
