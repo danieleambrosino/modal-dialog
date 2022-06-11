@@ -89,24 +89,6 @@ button.close:hover {
 	}
 
 	/**
-	 * @param {MouseEvent} event
-	 */
-	#closeOnBackdropClick(event) {
-		if (event.target === this.#backdrop) {
-			this.close();
-		}
-	}
-
-	/**
-	 * @param {KeyboardEvent} event
-	 */
-	#catchEscape = ((event) => {
-		if (event.key === 'Escape') {
-			this.close();
-		}
-	}).bind(this);
-
-	/**
 	 * @param {string} name
 	 * @param {?string} oldValue 
 	 * @param {?string} newValue 
@@ -120,6 +102,7 @@ button.close:hover {
 			this.#doClose();
 		}
 	}
+	static get observedAttributes() { return ['open']; }
 
 	#doOpen() {
 		this.#closeAllPreviouslyOpened();
@@ -127,10 +110,13 @@ button.close:hover {
 		document.addEventListener('keydown', this.#catchEscape);
 	}
 
+	#doClose() {
+		document.body.style.removeProperty('overflow');
+		document.removeEventListener('keydown', this.#catchEscape);
+	}
+
 	#closeAllPreviouslyOpened() {
-		/**
-		 * @type {ModalDialog[]}
-		 */
+		/** @type {ModalDialog[]} */
 		const modals = Array.from(document.querySelectorAll('modal-dialog[open]'));
 		modals
 			.filter((modal) => modal !== this)
@@ -139,11 +125,19 @@ button.close:hover {
 			});
 	}
 
-	#doClose() {
-		document.body.style.removeProperty('overflow');
-		document.removeEventListener('keydown', this.#catchEscape);
+	/**
+	 * @param {MouseEvent} event
+	 */
+	#closeOnBackdropClick(event) {
+		if (event.target === this.#backdrop) {
+			this.close();
+		}
 	}
 
-	static get observedAttributes() { return ['open']; }
+	#catchEscape = ((event) => {
+		if (event.key === 'Escape') {
+			this.close();
+		}
+	}).bind(this);
 }
 customElements.define("modal-dialog", ModalDialog);
