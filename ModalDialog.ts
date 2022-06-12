@@ -7,75 +7,12 @@ class ModalDialog extends HTMLElement {
 			this.ariaHidden = 'true';
 		}
 		const shadowRoot = this.attachShadow({ mode: "closed" });
-		const style = document.createElement('style');
-		style.textContent = `
-:host {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 9999;
-}
-:host(:not([open])) {
-	display: none;
-}
-.backdrop {
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
-	display: grid;
-	place-items: center;
-	padding: 1rem;
-}
-.content {
-	position: relative;
-	background-color: white;
-	border-radius: 5px;
-	padding: 1rem;
-	box-sizing: border-box;
-	max-width: 768px;
-	max-height: 100%;
-	overflow-y: auto;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-button.close {
-	position: absolute;
-	top: 0;
-	right: 0;
-	font-size: 2.5em;
-	border: none;
-	background: none;
-	cursor: pointer;
-	color: grey;
-}
-button.close:hover {
-	color: black;
-}
-`;
-
-		this.#backdrop = document.createElement('div');
-		this.#backdrop.classList.add('backdrop');
+		shadowRoot.innerHTML = `<style>:host{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999}:host(:not([open])){display:none}.backdrop{box-sizing:border-box;width:100%;height:100%;background-color:rgba(0,0,0,.5);display:grid;place-items:center;padding:1rem}.content{position:relative;background-color:#fff;border-radius:5px;padding:1rem;box-sizing:border-box;max-width:768px;max-height:100%;overflow-y:auto;box-shadow:0 0 10px rgba(0,0,0,.5)}button.close{position:absolute;top:0;right:0;font-size:2.5em;border:none;background:0 0;cursor:pointer;color:grey}button.close:hover{color:#000}</style><div class=backdrop><div class=content aria-modal=true role=dialog><slot></slot><button aria-label=Close class=close type=button>×</button></div></div>`;
+		this.#backdrop = shadowRoot.querySelector('.backdrop') as HTMLDivElement;
 		this.#backdrop.addEventListener('click', this.#closeOnBackdropClick.bind(this));
 
-		const content = document.createElement('div');
-		content.classList.add('content');
-		content.setAttribute('role', 'dialog');
-		content.ariaModal = 'true';
-		this.#backdrop.appendChild(content);
-
-		content.appendChild(document.createElement('slot'));
-
-		const closeButton = document.createElement('button');
-		closeButton.setAttribute('type', 'button');
-		closeButton.classList.add('close');
-		closeButton.textContent = '×';
+		const closeButton = shadowRoot.querySelector('button.close') as HTMLButtonElement;
 		closeButton.addEventListener('click', this.close.bind(this));
-		content.appendChild(closeButton);
-
-		shadowRoot.appendChild(style);
-		shadowRoot.appendChild(this.#backdrop);
 	}
 
 	open() {
