@@ -3,7 +3,10 @@ class ModalDialog extends HTMLElement {
 
 	constructor() {
 		super();
-		this.attachShadow({ mode: "open" });
+		if (!this.hasAttribute('open')) {
+			this.ariaHidden = 'true';
+		}
+		const shadowRoot = this.attachShadow({ mode: "closed" });
 		const style = document.createElement('style');
 		style.textContent = `
 :host {
@@ -14,11 +17,9 @@ class ModalDialog extends HTMLElement {
 	height: 100%;
 	z-index: 9999;
 }
-
 :host(:not([open])) {
 	display: none;
 }
-
 .backdrop {
 	box-sizing: border-box;
 	width: 100%;
@@ -28,7 +29,6 @@ class ModalDialog extends HTMLElement {
 	place-items: center;
 	padding: 1rem;
 }
-
 .content {
 	position: relative;
 	background-color: white;
@@ -40,7 +40,6 @@ class ModalDialog extends HTMLElement {
 	overflow-y: auto;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
-
 button.close {
 	position: absolute;
 	top: 0;
@@ -51,19 +50,19 @@ button.close {
 	cursor: pointer;
 	color: grey;
 }
-
 button.close:hover {
 	color: black;
 }
 `;
 
 		this.#backdrop = document.createElement('div');
-		this.#backdrop.setAttribute('role', 'presentation');
 		this.#backdrop.classList.add('backdrop');
 		this.#backdrop.addEventListener('click', this.#closeOnBackdropClick.bind(this));
 
 		const content = document.createElement('div');
 		content.classList.add('content');
+		content.setAttribute('role', 'dialog');
+		content.ariaModal = 'true';
 		this.#backdrop.appendChild(content);
 
 		content.appendChild(document.createElement('slot'));
@@ -75,8 +74,8 @@ button.close:hover {
 		closeButton.addEventListener('click', this.close.bind(this));
 		content.appendChild(closeButton);
 
-		this.shadowRoot.appendChild(style);
-		this.shadowRoot.appendChild(this.#backdrop);
+		shadowRoot.appendChild(style);
+		shadowRoot.appendChild(this.#backdrop);
 	}
 
 	open() {
@@ -99,11 +98,13 @@ button.close:hover {
 
 	#doOpen(): void {
 		this.#closeAllPreviouslyOpened();
+		this.ariaHidden = 'false';
 		document.body.style.overflow = 'hidden';
 		document.addEventListener('keydown', this.#catchEscape);
 	}
 
 	#doClose(): void {
+		this.ariaHidden = 'true';
 		document.body.style.removeProperty('overflow');
 		document.removeEventListener('keydown', this.#catchEscape);
 	}
