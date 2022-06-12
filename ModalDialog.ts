@@ -24,11 +24,13 @@ class ModalDialog extends HTMLElement {
 	}
 
 	attributeChangedCallback(name: string, oldValue?: string, newValue?: string): void {
-		if (name !== 'open') return;
-		if (newValue !== null) {
-			this.#doOpen();
-		} else {
-			this.#doClose();
+		switch (name) {
+			case 'open':
+				if (newValue !== null) {
+					this.#doOpen();
+				} else {
+					this.#doClose();
+				}
 		}
 	}
 	static get observedAttributes() { return ['open']; }
@@ -50,9 +52,7 @@ class ModalDialog extends HTMLElement {
 		const modals: ModalDialog[] = Array.from(document.querySelectorAll('modal-dialog[open]'));
 		modals
 			.filter((modal) => modal !== this)
-			.forEach((modal) => {
-				modal.close();
-			});
+			.forEach((modal) => modal.close());
 	}
 
 	#closeOnBackdropClick(event: MouseEvent) {
